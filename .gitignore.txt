@@ -1,0 +1,13 @@
+# Angular / Node
+node_modules/
+dist/
+
+# Java / Spring
+target/
+
+# Ambiente
+.env
+
+# IDEs
+.vscode/
+.idea/

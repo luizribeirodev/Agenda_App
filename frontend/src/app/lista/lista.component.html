@@ -1,0 +1,181 @@
+
+<button (click)="testarApi()">TESTAR API</button>
+<div class="layoutList"> 
+  <div class="dataSelecionada">
+    <p *ngIf="data">{{dataTexto}}</p>
+  </div>
+  <div class="botoes">
+    <div class="add"> 
+      <button (click)="abrirNovo()"><img src="img/icon-CalendarioRelogio.png" alt="+">Novo</button>
+    </div>
+    <div class="bloquear">
+      <button (click)="abrirBloquear()"><img src="img/icon-Cadiado.png" alt="">Bloquear</button>
+    </div>
+  </div>
+
+<!-- Modal Criar -->
+  <div class="overlay" *ngIf="novoHorario">   <!-- Faz com que o modal so carregue dps de ser  chamdo a função -->
+    <div class="modelo">
+      <button (click)="fecharNovo()" class="x">x</button>
+      <div class="tituloAgendamento">
+        <h2>Novo Agendamento</h2>
+        
+      </div>
+      <p>Nome do Cliente</p>
+      <input type="text" [(ngModel)]="nome" placeholder="Digite o nome">
+      <p>Telefone</p> 
+      <input type="tel" [(ngModel)]="tell" placeholder="(00) 0000-0000">
+      
+      <p>Serviço</p>
+      <select [(ngModel)]="tipoSelecionado">
+        <option value="" disabled>Selecione o serviço</option>
+        <option value="Corte Masculino">Corte Masculino (30min)</option>
+        <option value="Corte Feminino">Corte Feminino (45min)</option>
+        <option value="Corte + Barba">Corte + Barba (45min)</option>
+      </select>
+
+      <p>Horário</p>
+    <select [(ngModel)]="horarioSelecionado">
+      <option value="" disabled>Selecione o horário</option>
+
+      <option *ngFor="let h of horarios" [value]="h">
+        {{ h }}
+      </option>
+    </select>
+      
+      <div class="acoes">
+        <button (click)="fecharNovo()" class="btnCancelar">Cancelar</button>
+        <button (click)="salvarNovo()" class="btnSalvar">Agendar</button>
+      </div>
+    </div>
+  </div>   
+
+  <!-- Modal Bloquear -->
+  <div class="overlay" *ngIf="bloquearHorario">
+    <div class="modelo">
+      <button (click)="fecharBlock()" class="x">x</button>
+      <div class="tituloBlock">
+        <h2>Bloquear Horário</h2>
+    </div>
+
+      <p>Horário</p>
+    <select [(ngModel)]="horarioBlock">
+      <option value="" disabled>Selecione o horário</option>
+
+      <option *ngFor="let h of horarios" [value]="h">
+        {{ h }}
+      </option>
+    </select>
+
+    <p>Motivo</p>
+    <input type="text" [(ngModel)]="motivoBlock" placeholder="Ex: Almoço, Folga, etc.">  <!--  [(ngModel)]="motivoBlock" passa as informações para minha fariavel no lista.ts-->
+
+    <div class="acoes">
+        <button (click)="fecharBlock()" class="btnCancelar">Cancelar</button>
+        <button (click)="salvarBlock()" class="btnSalvar">Bloquear</button>
+      </div>
+  </div>
+  </div>
+
+  <!-- Modal Remarcar -->
+  <div class="overlay" *ngIf="remarcar && agendamentoSelecionado">
+    <div class="modelo">
+      <button (click)="fecharRemarcar()" class="x">x</button>
+
+      <div class="tituloAgendamento">
+        <h2>Remarcar Agendamento</h2>
+      </div>
+
+      <p>Nome do Cliente</p>
+      <input type="text" [(ngModel)]="nome">
+
+      <p>Telefone</p> 
+      <input type="tel" [(ngModel)]="tell">
+
+      <p>Serviço</p>
+      <select [(ngModel)]="tipoSelecionado">
+        <option value="Corte Masculino">Corte Masculino (30min)</option>
+        <option value="Corte Feminino">Corte Feminino (45min)</option>
+        <option value="Corte + Barba">Corte + Barba (45min)</option>
+      </select>
+
+      <p>Horário</p>
+      <select [(ngModel)]="horarioSelecionado">
+        <option *ngFor="let h of horarios" [value]="h">
+          {{ h }}
+        </option>
+      </select>
+
+      <div class="acoes">
+        <button (click)="fecharRemarcar()" class="btnCancelar">Cancelar</button>
+        <button (click)="salvarRemarcar()" class="btnSalvar">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div> 
+  <!-- Layout List -->
+  <!--       Lista          -->
+  <div class="btnLista">
+      <button (click)="abaAtiva = 'agendamentos'" [class.ativo]="abaAtiva === 'agendamentos'" > <!--      Passar o estado pro Ts e Css         -->
+        Agendamentos ({{totalAgendamentosDoDia}})
+      </button>
+
+      <button (click)="abaAtiva = 'bloqueados'" [class.ativo]="abaAtiva === 'bloqueados'">
+        Bloqueados ({{totalBlockDoDia}})
+      </button>
+  </div>
+
+
+<div class="lista" *ngIf="abaAtiva === 'agendamentos'">
+
+  <!-- SEM agendamentos -->
+  <ng-container *ngIf="agendamentos.length === 0; else listaAgendamentos">
+    <div class="estado-vazio">
+      <img src="img/icon-Calendario+.png">
+      <p>Nenhum agendamento para este dia</p>
+      <p>Clique em "Novo" para adicionar</p>
+    </div>
+  </ng-container>
+
+  <!-- COM agendamentos -->
+  <ng-template #listaAgendamentos>
+    <div *ngFor="let a of agendamentos" class="item">
+      <img src="img/icon-Pessoa00.png" alt="icon-Pessoa">
+      <p class="nome">{{ a.nome }}</p>
+      <img src="img/icon-Call.png" alt="icon-Call">
+      <p>{{ a.cell | mask: '(00) 0000-0000' }}</p>
+      <img src="img/icon-Relogio.png" alt="icon-Hora">
+      <p>{{ a.hora }}</p>
+      <p class="servico">{{ a.servico }}</p>
+        <div class="btn">
+        <button (click)="abrirRemarcar(a)"><img src="img/icon-Editar.png" alt="">Ramarcar</button>
+        <button (click)="apagarAgendamento(a)"><img src="img/icon-CancelarRed.png" alt=""><p class="cancelar">Cancelar</p></button>
+      </div>
+    </div>
+    
+  </ng-template>
+
+</div>
+
+<div class="lista" *ngIf="abaAtiva === 'bloqueados'">
+     <!--SEM HORARIO BLOQUEADO-->  
+<ng-container *ngIf="horariosBloqueados.length === 0; else listaBloqueados">
+  <div class="estado-vazio">
+    <img src="img/icon-CalendarioCadiado.png" alt="Calendario Bloqueado">
+      <p>Nenhum horário bloqueado</p>
+      <p>Use "Bloquear" para reservar horários</p>
+    </div>
+</ng-container>
+
+    <!--COM HORARIO BLOQUEADO-->
+    <ng-template #listaBloqueados>
+        <div *ngFor="let b of horariosBloqueados" class="itemBlock">
+            <img src="img/icon-Cadiadoblock.png" alt="icon-Pessoa">
+            <p class="titulo">Horário Bloqueado</p>
+            <button (click)="apagarHorarioBloqueado(b.horario,b.data)" class="cancelarblock">X</button>
+            <p class="horario">{{b.horario}}</p>
+            <p class="motivo">{{b.motivo}}</p>
+
+        </div>
+    </ng-template>
+  </div>
