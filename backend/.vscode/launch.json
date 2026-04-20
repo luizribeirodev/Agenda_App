@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "AgendaGriloApplication",
+            "request": "launch",
+            "mainClass": "com.AgendaGrilo.AgendaGrilo.AgendaGriloApplication",
+            "projectName": "agendagrilo"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
