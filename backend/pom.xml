@@ -73,7 +73,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
             <configuration>
-                <mainClass>com.AgendaGrilo.AgendaGrilo.AgendaGriloApplication</mainClass>
+                <mainClass>com.agendagrilo.AgendaGriloApplication</mainClass>
                 <excludes>
                     <exclude>
                         <groupId>org.projectlombok</groupId>
